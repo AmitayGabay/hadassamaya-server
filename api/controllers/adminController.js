@@ -2,7 +2,7 @@ const AdminModel = require("../models/adminModel");
 const ClientModel = require("../models/clientModel");
 const bcrypt = require("bcrypt");
 const {
-    generateAccessTokenHeader,
+    generateAccessTokenCookie,
     generateRefreshTokenCookie,
 } = require("../middleware/adminVerification");
 
@@ -12,7 +12,7 @@ const login = async (req, res) => {
         if (!admin) return res.status(404).json("Admin not found");
         const isCorrect = await bcrypt.compare(req.body.password, admin.password);
         if (!isCorrect) return res.status(401).json("Wrong adminname or password");
-        generateAccessTokenHeader(req, res, admin);
+        generateAccessTokenCookie(req, res, admin);
         generateRefreshTokenCookie(req, res, admin);
         admin.password = "********";
         res.status(200).json(admin);
@@ -34,7 +34,8 @@ const getCurrentAdmin = async (req, res) => {
 const getClients = async (req, res) => {
     try {
         const clients = await ClientModel.find({ isEdited: false }).sort({ _id: -1 });
-        return res.status(200).json(clients);
+        const editedClients = await ClientModel.find({ isEdited: true }).sort({ _id: -1 });
+        return res.status(200).json({ clients: clients, editedClients: editedClients });
     } catch (e) {
         return res.status(500).json(`Failed to fetch clients ${e}`);
     }
