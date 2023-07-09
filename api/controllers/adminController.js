@@ -21,6 +21,28 @@ const login = async (req, res) => {
     }
 };
 
+const logout = async (req, res) => {
+    try {
+        res.clearCookie("accessToken", {
+            // maxAge: 1000, // required to avoid firefox 'cookie already exp' warnning
+            httpOnly: true,
+            sameSite: "None",
+            secure: true,
+        });
+        res.clearCookie("refreshToken", {
+            // maxAge: 1000, // required to avoid firefox 'cookie already exp' warnning
+            httpOnly: true,
+            sameSite: "None",
+            secure: true,
+        });
+        return res.status(200).json("Admin logged out succesfully");
+    } catch (e) {
+        return res.status(500).json(`Logout proccess failed ${e}`);
+    }
+
+};
+
+
 const getCurrentAdmin = async (req, res) => {
     try {
         const admin = await AdminModel.findOne({ adminname: req.admin.adminname });
@@ -65,6 +87,7 @@ const deleteClient = async (req, res) => {
 
 module.exports = {
     login,
+    logout,
     getCurrentAdmin,
     getClients,
     editClient,
