@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
     cors({
-        origin: ["http://localhost:3000", "http://localhost:3000/", "https://hadassa-maya-nlp.netlify.app/"],
+        origin: ["http://localhost:3000", "http://localhost:3000/", "https://hadassa-maya-nlp.netlify.app", "https://hadassa-maya-nlp.netlify.app/"],
         credentials: true,
     })
 );
